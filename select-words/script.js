@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-var inputFileName = 'palavras.txt';
+var inputFileName = 'palavras2.txt';
 var outputFileName = '5-letters-palavras.txt';
 
 
@@ -37,7 +37,12 @@ var config = [
     ['õ' , 'o'],
     ['â' , 'a'],
     ['\n' , ''],
+    ['à' , 'a'],
+    ['ö' , 'o'],
+    ['è' , 'e'],
+    ['î' , 'i'],
  ];
+
 
 
 function normalizarPalavra(palavra){
