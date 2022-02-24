@@ -12,7 +12,9 @@ fs.readFile(inputFileName, 'utf-8', (err, data) => {
     {
         if(arr[i].length == 5){
             var palavra = normalizarPalavra(arr[i]);
-            outPutArray.push(palavra);
+            if(palavra.length == 5){
+                outPutArray.push(palavra);
+            }
         }
     }
     var outputdata  = outPutArray.join('\n');
@@ -28,7 +30,15 @@ var config = [
     ['ó' , 'o'],
     ['á' , 'a'],
     ['é' , 'e'],
+    ['ã' , 'a'],
+    ['ç' , 'c'],
+    ['ô' , 'o'],
+    ['ê' , 'e'],
+    ['õ' , 'o'],
+    ['â' , 'a'],
+    ['\n' , ''],
  ];
+
 
 function normalizarPalavra(palavra){
     palavra = palavra.toLowerCase();
