@@ -1,28 +1,7 @@
 const fs = require('fs');
 
-var inputFileName = 'palavras2.txt';
-var outputFileName = '5-letters-palavras.txt';
-
-
-fs.readFile(inputFileName, 'utf-8', (err, data) => {
-    if (err) throw err;
-    var arr = data.split('\r\n');
-    var outPutArray = [];
-    for(let i = 0; i < arr.length; i++)
-    {
-        if(arr[i].length == 5){
-            var palavra = normalizarPalavra(arr[i]);
-            if(palavra.length == 5){
-                outPutArray.push(palavra);
-            }
-        }
-    }
-    var outputdata  = outPutArray.join('\n');
-    fs.writeFile(outputFileName, outputdata, (err) => {
-        if (err) throw err;
-      console.log('O arquivo foi criado!');
-    });
-});
+var inputFileName = '5-letters-palavras.txt';
+var outputFileName = '5-letters.txt';
 
 var config = [
     ['ú' , 'u'] ,
@@ -50,7 +29,7 @@ function normalizarPalavra(palavra){
     for(let i = 0 ; i < config.length ; i++ ){
         palavra = palavra.replaceAll(config[i][0],config[i][1] );
     }
-    return palavra;
+    return palavra.trim();
 }
 
 
@@ -61,3 +40,37 @@ String.prototype.replaceAll = function(a ,b){
     }
     return s;
 }
+
+var letrasIgnorar = ['-', '\n', '.', 'º', 'ï','ª', "'"];
+
+fs.readFile(inputFileName, 'utf-8', (err, data) => {
+    if (err) throw err;
+    var arr = data.split('\r\n');
+    var outPutArray = [];
+    for(let i = 0; i < arr.length; i++)
+    {
+        if(arr[i].length == 5){
+            var palavra = normalizarPalavra(arr[i]);
+            var ignorarPalavra = false;
+            for(let j = 0 ; j < palavra.length && !ignorarPalavra  ; j++ ){
+               if(letrasIgnorar.indexOf(palavra[j]) > -1 ){
+                    ignorarPalavra = true;
+               }
+            }
+            if(palavra == 'vence' ){
+                var x = 0 ;
+            }
+            
+            if(palavra.length == 5 && outPutArray.indexOf(palavra) == -1 && !ignorarPalavra ){
+                outPutArray.push(palavra);
+            }
+        }
+    }
+    var outputdata  = outPutArray.join('\r\n');
+    fs.writeFile(outputFileName, outputdata, (err) => {
+        if (err) throw err;
+      console.log('O arquivo foi criado!');
+    });
+});
+
+
