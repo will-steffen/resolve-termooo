@@ -1,6 +1,49 @@
 const fs = require('fs');
 
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
 var inputFileName = '5-letters.txt';
+
+let Resultado = {
+    Inexistente: 0,
+    LugarErrado: 1, 
+    LugarCerto:  2,
+}
+
+class Letra{
+    constructor(caractere,resultado){
+        this.caractere = caractere;
+        this.resultado = resultado;
+
+    }
+}
+
+class Palavra{
+    constructor(letras){
+        this.letras = letras;
+        
+    }
+}
+
+let palavras = [
+    // new Palavra([
+    //     new Letra('m',Resultado.Inexistente), 
+    //     new Letra('e',Resultado.Inexistente),
+    //     new Letra('i',Resultado.Inexistente),
+    //     new Letra('a',Resultado.LugarCerto),
+    //     new Letra('o',Resultado.LugarErrado),
+    // ]),
+    // new Palavra([
+    //     new Letra('o',Resultado.LugarErrado), 
+    //     new Letra('u',Resultado.Inexistente),
+    //     new Letra('s',Resultado.Inexistente),
+    //     new Letra('a',Resultado.LugarCerto),
+    //     new Letra('r',Resultado.LugarCerto),
+    // ]),
+];
 
 const pontos = {
     a : 5000,
@@ -31,23 +74,57 @@ const pontos = {
     z : 1100,
 }
 
+let arrayDePalavra;
+let palavrasInexistente = [];
+//termo 
+//20210
+
+function exec(){
+    arrayDePalavra = encontrarPalavras(arrayDePalavra);
+    let palavraSugerida = selecionarPalavra(arrayDePalavra);
+    if(arrayDePalavra.length == 1){
+        console.log('A palavra encontrada é:' + palavraSugerida);
+        console.log();
+        readline.close();
+    }else{
+        console.log('A palavra sugerida é:' + palavraSugerida);
+        readline.question('Qual o resultado ?', resultado => {
+         
+            if(resultado != 'exit' ){
+                if(resultado == '0'){
+                    console.log('Registrado PalavraInexistente !')
+                    palavrasInexistente.push(palavraSugerida);
+                }
+                else{
+                    let palavra = new Palavra([
+                        new Letra(palavraSugerida [0] ,resultado[0]), 
+                        new Letra(palavraSugerida [1] ,resultado[1]), 
+                        new Letra(palavraSugerida [2] ,resultado[2]), 
+                        new Letra(palavraSugerida [3] ,resultado[3]), 
+                        new Letra(palavraSugerida [4] ,resultado[4]), 
+                    ]);
+                    palavras.push(palavra);
+                }
+                exec();
+            }else{
+                readline.close();
+            }
+        });
+    }
+    
+}
+
 fs.readFile(inputFileName, 'utf-8', (err, data) => {
     if (err) throw err;
-    var arrayDePalavra = data.split('\r\n');
-    arrayDePalavra = encontrarPalavras(arrayDePalavra);
-
-    console.log(selecionarPalavra(arrayDePalavra));
+    arrayDePalavra = data.split('\r\n');
+    exec();
 });
 
 function selecionarPalavra(arrayDePalavra) {
     let palavraSelecionada = '' ;
     let pontucaoPalavraSelecionada = 0 ;
     for(let i = 0 ; i < arrayDePalavra.length; i++){
-        
-        if(arrayDePalavra[i] == 'colon' ){
-            let x = 0;
-        }
-        
+            
         let pontucaoPalavra = 0;
         let letras = [];
         for(let j = 0; j < arrayDePalavra[i].length ; j++){
@@ -72,39 +149,28 @@ function selecionarPalavra(arrayDePalavra) {
 
 
 
-function encontrarPalavras(arrayDePalavra){ // 
+function encontrarPalavras(arrayDePalavra){  
+    for(let j = 0 ; j< palavras.length ; j++){
+        for(let i = 0 ; i < palavras[j].letras.length ; i++){
+            let letra = palavras[j].letras[i];
+            if(letra.resultado == Resultado.LugarCerto){
+                arrayDePalavra = arrayDePalavra.filter(x => x[i] == letra.caractere);
+            }
+
+            if(letra.resultado == Resultado.LugarErrado){
+                arrayDePalavra = arrayDePalavra.filter(x => x.indexOf(letra.caractere) > -1);
+                arrayDePalavra = arrayDePalavra.filter(x => x[i] != letra.caractere);
+            }
+
+            if(letra.resultado == Resultado.Inexistente){
+                arrayDePalavra = arrayDePalavra.filter(x => x.indexOf(letra.caractere) == -1);
+            }
+
+        }
+    }
+
+    arrayDePalavra = arrayDePalavra.filter(x => palavrasInexistente.indexOf(x) == -1);
     return arrayDePalavra 
-
-
-        .filter(x => x[3] == 'o')
-        .filter(x => x[1] == 'o')
-        .filter(x => x[4] == 'n')
-        .filter(x => x[0] == 'c')
-        .filter(x => x.indexOf('a') == -1)
-        .filter(x => x.indexOf('p') == -1)
-        .filter(x => x.indexOf('e') == -1)
-        .filter(x => x.indexOf('i') == -1)
-        .filter(x => x.indexOf('m') == -1)
-        .filter(x => x.indexOf('u') == -1)
-        .filter(x => x.indexOf('r') == -1)
-        .filter(x => x.indexOf('s') == -1)
-        .filter(x => x.indexOf('f') == -1)
-        .filter(x => x.indexOf('t') == -1)
-        .filter(x => x.indexOf('d') == -1)
-
-        // .filter(x => x.indexOf('c') == -1)
-        // .filter(x => x[4] == 'a')
-        // .filter(x => x[3] == 'i')
-        // .filter(x => x.count('a') == 1)
-        // .filter(x => x.indexOf('e') == -1)
-        // .filter(x => x.indexOf('d') == -1)
-        // .filter(x => x[0] == 'm')
-        // .filter(x => x.indexOf('o') == -1)
-        // .filter(x => x.indexOf('v') == -1)
-        // .filter(x => x[1] == 'u')
-        // .filter(x => x.indexOf('g') == -1)
-        // .filter(x => x.indexOf('n') == -1)
-    ;
 }
 
 
@@ -119,28 +185,4 @@ String.prototype.count = function(a){
     }
     return c;
 }
-
-// var asdfsdf = arrayDePalavra
-//         .filter(x => x.indexOf('m') == -1)
-//         .filter(x => x.indexOf('i') == -1)
-//         .filter(x => x.indexOf('t') == -1)
-//         .filter(x => x.indexOf('o') == -1)
-      
-//         .filter(x => x.indexOf('l') == -1)
-//         .filter(x => x.indexOf('a') == -1)
-//         .filter(x => x.indexOf('r') == -1)
-
- 
-//         .filter(x => x.indexOf('u') > -1)
-//         .filter(x => x.indexOf('u') != 1)
-//         .filter(x => x.indexOf('u') != 4)
-
-//         .filter(x => x.indexOf('n') > -1)
-//         .filter(x => x.indexOf('n') != 0)
-
-//         .filter(x => x.indexOf('s') > -1)
-//         .filter(x => x.indexOf('s') != 0)
-//         .filter(x => x.indexOf('s') != 2)
-
-//         .filter(x => x[1] == 'e')
-//         .filter(x => x[3] != 'e')
+        
